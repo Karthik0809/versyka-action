@@ -1,0 +1,29 @@
+# Runs the action on a small sample that uses a retiring model and an old SDK, and checks the results.
+name: Test
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Create a sample project
+        run: |
+          mkdir -p sample
+          printf 'from openai import OpenAI\nclient = OpenAI()\nclient.chat.completions.create(model="gpt-3.5-turbo", messages=[])\n' > sample/app.py
+          printf 'openai==0.28.1\n' > sample/requirements.txt
+      - id: versyka
+        uses: ./
+        with:
+          path: sample
+          fail-on: none
+          comment: "false"
+      - name: Check the results
+        run: |
+          echo "retired=${{ steps.versyka.outputs.retired }} soon=${{ steps.versyka.outputs.soon }} behind=${{ steps.versyka.outputs.behind }}"
+          test $(( ${{ steps.versyka.outputs.retired }} + ${{ steps.versyka.outputs.soon }} )) -ge 1
+          test "${{ steps.versyka.outputs.behind }}" -ge 1
