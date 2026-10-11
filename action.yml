@@ -1,0 +1,35 @@
+name: Versyka — AI model retirements and SDK upgrades
+description: Flags AI model IDs that are retired or retiring (OpenAI, Anthropic, Gemini, Mistral, Cohere) and API SDKs that are major versions behind, with dates, replacements and file:line.
+author: Versyka
+branding:
+  icon: calendar
+  color: orange
+inputs:
+  fail-on:
+    description: "When to fail: none, retired (a model that no longer works), soon (retiring within `days`), or behind (also an SDK major versions behind or deprecated)."
+    default: retired
+  days:
+    description: How many days ahead counts as "soon".
+    default: "90"
+  comment:
+    description: Comment on the pull request (updated in place, never repeated).
+    default: "true"
+  path:
+    description: The folder to check.
+    default: "."
+  github-token:
+    description: Token used to comment on the pull request.
+    default: ${{ github.token }}
+  api-url:
+    description: Versyka API base URL.
+    default: https://www.versyka.com
+outputs:
+  retired:
+    description: Number of retired models still referenced.
+  soon:
+    description: Number of models retiring within `days`.
+  behind:
+    description: Number of API SDKs major versions behind, deprecated or replaced.
+runs:
+  using: node24
+  main: index.mjs
