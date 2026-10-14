@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: Karthik0809/versyka-action@v1
+      - uses: versyka/versyka-action@v1
         with:
           fail-on: retired
 ```
